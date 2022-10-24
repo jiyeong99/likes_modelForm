@@ -59,3 +59,14 @@ def update(request):
         'form': form
     }
     return render(request, 'accounts/update.html', context)
+
+@login_required
+def follow(request,pk):
+    fuser = get_user_model().objects.get(pk=pk)
+    if request.method == 'POST':
+        if fuser.followers.filter(pk=request.user.pk).exists():
+            fuser.followers.remove(request.user)
+        else:
+            fuser.followers.add(request.user)
+        return redirect('accounts:detail', pk)
+    return redirect('accounts:detail', pk)
